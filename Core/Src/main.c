@@ -118,8 +118,8 @@ uint8_t input_buf[INPUT_PC_DATA_LENGTH];
 uint8_t flag_data_received_from_pc;
 
 typedef struct {
-	uint8_t cmd;
-	uint32_t data;
+  uint8_t cmd;
+  uint32_t data;
 } received_tuple;
 
 uint8_t flag_pause_triggering = 1;
@@ -160,200 +160,200 @@ int _write(int file,char *ptr, int len) {
 //}
 
 //void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-	//HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
-	/*if(GPIO_Pin == GPIO_PIN_9)
+  //HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
+  /*if(GPIO_Pin == GPIO_PIN_9)
   {
-  	flag_read_imu_values = 1;
-  	soft_rtc_imu_subs = read_TIM5();
-		soft_rtc_imu_s = soft_rtc_s;
-		soft_rtc_imu_m = soft_rtc_m;
-		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+    flag_read_imu_values = 1;
+    soft_rtc_imu_subs = read_TIM5();
+    soft_rtc_imu_s = soft_rtc_s;
+    soft_rtc_imu_m = soft_rtc_m;
+    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
   }*/
 //}
 
 void setup_mpu(void) {
-	uint8_t dat[] = {   5, 16,  1,  1,  8,  8};
-	uint8_t adds[] = {107, 55, 26, 56, 27, 28};
-	uint8_t n_of_bytes = sizeof(dat) / sizeof(dat[0]);
-	for (uint8_t idx=0; idx<n_of_bytes; idx++) {
-		HAL_I2C_Mem_Write(&hi2c1, 0x68<<1, adds[idx], 1, &dat[idx], 1, 1000);
-	}
+  uint8_t dat[] = {   5, 16,  1,  1,  8,  8};
+  uint8_t adds[] = {107, 55, 26, 56, 27, 28};
+  uint8_t n_of_bytes = sizeof(dat) / sizeof(dat[0]);
+  for (uint8_t idx=0; idx<n_of_bytes; idx++) {
+    HAL_I2C_Mem_Write(&hi2c1, 0x68<<1, adds[idx], 1, &dat[idx], 1, 1000);
+  }
 }
 
 void make_message(void) {
-	sprintf(str,
-		"i0"																				//2
-		"%02x %02x %04x %04x "											//16
-		"%04x %04x %04x %04x %04x %04x %04x "			 	//35
-		"%04x %04x %04x %04x "											//20
-		"%04x"																			//4
-		"\n", 																			//1
-																								//=78
-		(uint8_t)soft_rtc_imu_m,
-		(uint8_t)soft_rtc_imu_s,
-		(uint16_t)(soft_rtc_imu_subs>>16),
-		(uint16_t)(soft_rtc_imu_subs),
+  sprintf(str,
+    "i0"                                        //2
+    "%02x %02x %04x %04x "                      //16
+    "%04x %04x %04x %04x %04x %04x %04x "       //35
+    "%04x %04x %04x %04x "                      //20
+    "%04x"                                      //4
+    "\n",                                       //1
+                                                //=78
+    (uint8_t)soft_rtc_imu_m,
+    (uint8_t)soft_rtc_imu_s,
+    (uint16_t)(soft_rtc_imu_subs>>16),
+    (uint16_t)(soft_rtc_imu_subs),
 
-		(uint16_t)(dat_buf[0]<<8 | dat_buf[1]),
-		(uint16_t)(dat_buf[2]<<8 | dat_buf[3]),
-		(uint16_t)(dat_buf[4]<<8 | dat_buf[5]),
-		(uint16_t)(dat_buf[6]<<8 | dat_buf[7]),
-		(uint16_t)(dat_buf[8]<<8 | dat_buf[9]),
-		(uint16_t)(dat_buf[10]<<8 | dat_buf[11]),
-		(uint16_t)(dat_buf[12]<<8 | dat_buf[13]),
+    (uint16_t)(dat_buf[0]<<8 | dat_buf[1]),
+    (uint16_t)(dat_buf[2]<<8 | dat_buf[3]),
+    (uint16_t)(dat_buf[4]<<8 | dat_buf[5]),
+    (uint16_t)(dat_buf[6]<<8 | dat_buf[7]),
+    (uint16_t)(dat_buf[8]<<8 | dat_buf[9]),
+    (uint16_t)(dat_buf[10]<<8 | dat_buf[11]),
+    (uint16_t)(dat_buf[12]<<8 | dat_buf[13]),
 
-		(uint16_t)(dat_[1]<<8 | dat_[0]),
-		(uint16_t)(dat_[3]<<8 | dat_[2]),
-		(uint16_t)(dat_[5]<<8 | dat_[4]),
-		(uint16_t)(dat_[7]<<8 | dat_[6]),
+    (uint16_t)(dat_[1]<<8 | dat_[0]),
+    (uint16_t)(dat_[3]<<8 | dat_[2]),
+    (uint16_t)(dat_[5]<<8 | dat_[4]),
+    (uint16_t)(dat_[7]<<8 | dat_[6]),
 
-		count
-	);
-	if (buf_flag_cameras_ts_ready == 1) {
-		sprintf(str + N_IMU_CHARS,
-			"c0"																				//2
-			"%02x %02x %04x %04x"	 										  //15
-			"\n", 																			//1
-																									//=18
-			(uint8_t)soft_rtc_cameras_m,
-			(uint8_t)soft_rtc_cameras_s,
-			(uint16_t)(soft_rtc_cameras_subs>>16),
-			(uint16_t)(soft_rtc_cameras_subs)
-		);
-	}
+    count
+  );
+  if (buf_flag_cameras_ts_ready == 1) {
+    sprintf(str + N_IMU_CHARS,
+      "c0"                                        //2
+      "%02x %02x %04x %04x"                       //15
+      "\n",                                       //1
+                                                  //=18
+      (uint8_t)soft_rtc_cameras_m,
+      (uint8_t)soft_rtc_cameras_s,
+      (uint16_t)(soft_rtc_cameras_subs>>16),
+      (uint16_t)(soft_rtc_cameras_subs)
+    );
+  }
   if (buf_flag_mocap_ts_ready == 1) {
-		sprintf(str + N_IMU_CHARS + buf_flag_cameras_ts_ready * N_CAMERAS_CHARS,
-			"m0"																				//2
-			"%02x %02x %04x %04x"											  //15
-			"\n", 																			//1
-																									//=18
-			(uint8_t)soft_rtc_mocap_m,
-			(uint8_t)soft_rtc_mocap_s,
-			(uint16_t)(soft_rtc_mocap_subs>>16),
-			(uint16_t)(soft_rtc_mocap_subs)
-		);
-	}
+    sprintf(str + N_IMU_CHARS + buf_flag_cameras_ts_ready * N_CAMERAS_CHARS,
+      "m0"                                        //2
+      "%02x %02x %04x %04x"                       //15
+      "\n",                                       //1
+                                                  //=18
+      (uint8_t)soft_rtc_mocap_m,
+      (uint8_t)soft_rtc_mocap_s,
+      (uint16_t)(soft_rtc_mocap_subs>>16),
+      (uint16_t)(soft_rtc_mocap_subs)
+    );
+  }
 }
 
 void delay(uint16_t n) {
-	for (uint16_t i=0; i<n; i++) {
-		;
-	}
+  for (uint16_t i=0; i<n; i++) {
+    ;
+  }
 }
 
 void cp() {
-	for (uint8_t i=0; i<N_BYTES; i++) {
-		dat_buf[i] = dat[i];
-	}
+  for (uint8_t i=0; i<N_BYTES; i++) {
+    dat_buf[i] = dat[i];
+  }
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
-	if (htim->Instance == htim2.Instance) {
-		soft_rtc_s ++;
-		if (soft_rtc_s == 60) {
-			soft_rtc_s = 0;
-			soft_rtc_m ++;
-			if (soft_rtc_m == 60) {
-				soft_rtc_m = 0;
-				soft_rtc_h ++;
-				if (soft_rtc_h == 24) {
-					soft_rtc_h = 0;
-				}
-			}
-		}
-	}
+  if (htim->Instance == htim2.Instance) {
+    soft_rtc_s ++;
+    if (soft_rtc_s == 60) {
+      soft_rtc_s = 0;
+      soft_rtc_m ++;
+      if (soft_rtc_m == 60) {
+        soft_rtc_m = 0;
+        soft_rtc_h ++;
+        if (soft_rtc_h == 24) {
+          soft_rtc_h = 0;
+        }
+      }
+    }
+  }
 }
-	/*else if (htim->Instance == htim1.Instance)
-	{
-		if(HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_9)==GPIO_PIN_SET) { // if timer output is HIGH
+  /*else if (htim->Instance == htim1.Instance)
+  {
+    if(HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_9)==GPIO_PIN_SET) { // if timer output is HIGH
 
-			soft_rtc_lidar_subs = read_TIM5();
-			soft_rtc_lidar_s = soft_rtc_s;
-			soft_rtc_lidar_m = soft_rtc_m;
-			//HAL_RTC_GetTime(&hrtc, &sTime_lidar, RTC_FORMAT_BIN);
-			//HAL_RTC_GetDate(&hrtc, &sDate_lidar, RTC_FORMAT_BIN);
-			flag_lidar_ts_ready = 1;
-			flag_transmit_to_lidar = 1;
-			//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
-			//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
-		}
-	}
-	else if (htim->Instance == htim2.Instance)
-	{
-		if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5)==GPIO_PIN_RESET) { // if timer output is HIGH // is not needed
+      soft_rtc_lidar_subs = read_TIM5();
+      soft_rtc_lidar_s = soft_rtc_s;
+      soft_rtc_lidar_m = soft_rtc_m;
+      //HAL_RTC_GetTime(&hrtc, &sTime_lidar, RTC_FORMAT_BIN);
+      //HAL_RTC_GetDate(&hrtc, &sDate_lidar, RTC_FORMAT_BIN);
+      flag_lidar_ts_ready = 1;
+      flag_transmit_to_lidar = 1;
+      //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+      //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
+    }
+  }
+  else if (htim->Instance == htim2.Instance)
+  {
+    if(HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5)==GPIO_PIN_RESET) { // if timer output is HIGH // is not needed
 
-			soft_rtc_cameras_subs = read_TIM5();
-			soft_rtc_cameras_s = soft_rtc_s;
-			soft_rtc_cameras_m = soft_rtc_m;
+      soft_rtc_cameras_subs = read_TIM5();
+      soft_rtc_cameras_s = soft_rtc_s;
+      soft_rtc_cameras_m = soft_rtc_m;
 
-			//HAL_RTC_GetTime(&hrtc, &sTime_cam, RTC_FORMAT_BIN);
-			//HAL_RTC_GetDate(&hrtc, &sDate_cam, RTC_FORMAT_BIN);
-			flag_cameras_ts_ready = 1;
-			//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
-			//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
-		}
-	}*/
+      //HAL_RTC_GetTime(&hrtc, &sTime_cam, RTC_FORMAT_BIN);
+      //HAL_RTC_GetDate(&hrtc, &sDate_cam, RTC_FORMAT_BIN);
+      flag_cameras_ts_ready = 1;
+      //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
+      //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
+    }
+  }*/
 //}
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
     if (huart->Instance == UART4) {
-    	//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, SET);
-    	//flag_alignment_received = 1;
-    	flag_data_received_from_pc = 1;
+      //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, SET);
+      //flag_alignment_received = 1;
+      flag_data_received_from_pc = 1;
     }
 }
 
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
   if (htim->Instance == htim2.Instance) {
-  	if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
-  		soft_rtc_imu_s = soft_rtc_s;
-			soft_rtc_imu_m = soft_rtc_m;
-			soft_rtc_imu_subs = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
-  		flag_read_imu_values = 1;
-			//HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
-  	}
-  	if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2) {
-			soft_rtc_cameras_s = soft_rtc_s;
-			soft_rtc_cameras_m = soft_rtc_m;
-			soft_rtc_cameras_subs = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_2);
-			flag_cameras_ts_ready = 1;
-			//HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
-  	}
-  	if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_3) {
-			soft_rtc_mocap_s = soft_rtc_s;
-			soft_rtc_mocap_m = soft_rtc_m;
-			soft_rtc_mocap_subs = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_3);
-			flag_mocap_ts_ready = 1;
-			//HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
-  	}
+    if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_1) {
+      soft_rtc_imu_s = soft_rtc_s;
+      soft_rtc_imu_m = soft_rtc_m;
+      soft_rtc_imu_subs = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_1);
+      flag_read_imu_values = 1;
+      //HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+    }
+    if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_2) {
+      soft_rtc_cameras_s = soft_rtc_s;
+      soft_rtc_cameras_m = soft_rtc_m;
+      soft_rtc_cameras_subs = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_2);
+      flag_cameras_ts_ready = 1;
+      //HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+    }
+    if (htim->Channel == HAL_TIM_ACTIVE_CHANNEL_3) {
+      soft_rtc_mocap_s = soft_rtc_s;
+      soft_rtc_mocap_m = soft_rtc_m;
+      soft_rtc_mocap_subs = HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_3);
+      flag_mocap_ts_ready = 1;
+      //HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);
+    }
   }
 }
 
 void receive_from_pc(void) {
-	HAL_UART_Receive_DMA(&huart4, input_buf, INPUT_PC_DATA_LENGTH);
+  HAL_UART_Receive_DMA(&huart4, input_buf, INPUT_PC_DATA_LENGTH);
 }
 
 received_tuple parse_data(void) {
-	received_tuple received;
-	received.cmd = input_buf[0];
-	received.data = (uint32_t)(input_buf[1] | input_buf[2] << 8 | input_buf[3] << 16 | input_buf[4] << 24);
-	return received;
+  received_tuple received;
+  received.cmd = input_buf[0];
+  received.data = (uint32_t)(input_buf[1] | input_buf[2] << 8 | input_buf[3] << 16 | input_buf[4] << 24);
+  return received;
 }
 
 /*void align_timer(void) {
-	alignment_subs_signed -= (int32_t)alignment_subs_received; // must not overfill uint32_t
-	while (alignment_subs_signed < (int32_t)alignment_subs_low) {
-		alignment_subs_signed += ALIGN_SUBS_INTERVAL;
-	}
-	TIM2->CCR1 = (uint32_t)alignment_subs_signed;
+  alignment_subs_signed -= (int32_t)alignment_subs_received; // must not overfill uint32_t
+  while (alignment_subs_signed < (int32_t)alignment_subs_low) {
+    alignment_subs_signed += ALIGN_SUBS_INTERVAL;
+  }
+  TIM2->CCR1 = (uint32_t)alignment_subs_signed;
 }*/
 /*void align_timer(void) {
-	alignment_subs_signed -= (int32_t)alignment_subs_received; // must not overfill uint32_t
-	while (alignment_subs_signed < 0) {
-		alignment_subs_signed += (htim2.Init.Period + 1);
-	}
-	TIM2->CCR1 = (uint32_t)alignment_subs_signed;
+  alignment_subs_signed -= (int32_t)alignment_subs_received; // must not overfill uint32_t
+  while (alignment_subs_signed < 0) {
+    alignment_subs_signed += (htim2.Init.Period + 1);
+  }
+  TIM2->CCR1 = (uint32_t)alignment_subs_signed;
 }*/
 /* USER CODE END 0 */
 
@@ -401,12 +401,12 @@ int main(void)
   setup_mpu();
   //HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
-	//HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1);
-	//delay(10);
-	//HAL_TIM_OC_Start(&htim3, TIM_CHANNEL_1);
-	//delay(10);
-	//delay(10);
-	//HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
+  //HAL_TIM_OC_Start_IT(&htim5, TIM_CHANNEL_1);
+  //delay(10);
+  //HAL_TIM_OC_Start(&htim3, TIM_CHANNEL_1);
+  //delay(10);
+  //delay(10);
+  //HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
   //HAL_TIM_IC_Start(&htim3, TIM_CHANNEL_1);
   //HAL_TIM_OC_Start(&htim3, TIM_CHANNEL_2);
   //HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
@@ -425,8 +425,8 @@ int main(void)
 
   //76.8 / ((0 + 1) * (1 + 1)) / 2 = 19.2 MHz TIM3 IMU
   //76.8 * 1000000 / ((7680 - 1 + 1) * (1000 - 1 + 1)) / 2 = 5 Hz TIM2 CAMERAS
-	//76.8 * 1000000 / ((7680 - 1 + 1) * (5000 - 1 + 1)) / 2 = 1 Hz TIM1 LIDAR
-	//76.8 * 1000000 / ((3 - 1 + 1) * (25600000 - 1 + 1)) = 1 Hz TIM5
+  //76.8 * 1000000 / ((7680 - 1 + 1) * (5000 - 1 + 1)) / 2 = 1 Hz TIM1 LIDAR
+  //76.8 * 1000000 / ((3 - 1 + 1) * (25600000 - 1 + 1)) = 1 Hz TIM5
 
 /*
 • General-purpose timers (32 bit: TIM2, TIM5; 16 bit: TIM3, TIM4) can be used by any application for: output comparison
@@ -476,26 +476,26 @@ fields that require very fine timing resolution.
 |::                      ::|
 |::             [D5 USB] ::|
 --------------------------*/
-	//receive_alignment();
-	receive_from_pc();
-	dat_[0] = 0b10000010;
-	HAL_I2C_Mem_Write(&hi2c2, 0b0011100<<1, 0x20, 1, dat_, 1, 1000);
-	dat_[0] = 0b00001100;
-	HAL_I2C_Mem_Write(&hi2c2, 0b0011100<<1, 0x23, 1, dat_, 1, 1000);
-	dat_[0] = 0;
-	HAL_I2C_Mem_Write(&hi2c2, 0b0011100<<1, 0x22, 1, dat_, 1, 1000);
+  //receive_alignment();
+  receive_from_pc();
+  dat_[0] = 0b10000010;
+  HAL_I2C_Mem_Write(&hi2c2, 0b0011100<<1, 0x20, 1, dat_, 1, 1000);
+  dat_[0] = 0b00001100;
+  HAL_I2C_Mem_Write(&hi2c2, 0b0011100<<1, 0x23, 1, dat_, 1, 1000);
+  dat_[0] = 0;
+  HAL_I2C_Mem_Write(&hi2c2, 0b0011100<<1, 0x22, 1, dat_, 1, 1000);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-  	//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5)); // forward timer output signal to led pin
-  	//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_9)); // forward timer output signal to led pin
-  	HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1)); // forward timer output signal to led pin
-  	if (flag_read_imu_values == 1) {
-			//HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
-			flag_read_imu_values = 0;
+    //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_5)); // forward timer output signal to led pin
+    //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, HAL_GPIO_ReadPin(GPIOE, GPIO_PIN_9)); // forward timer output signal to led pin
+    HAL_GPIO_WritePin(GPIOD, GPIO_PIN_15, HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_1)); // forward timer output signal to led pin
+    if (flag_read_imu_values == 1) {
+      //HAL_NVIC_DisableIRQ(EXTI9_5_IRQn);
+      flag_read_imu_values = 0;
       buf_flag_cameras_ts_ready = flag_cameras_ts_ready;
       buf_flag_mocap_ts_ready = flag_mocap_ts_ready;
       if (buf_flag_cameras_ts_ready == 1) {
@@ -504,51 +504,51 @@ fields that require very fine timing resolution.
       if (buf_flag_mocap_ts_ready == 1) {
               flag_mocap_ts_ready = 0;
       }
-			//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
-			count++;
-			cp();
-			HAL_I2C_Mem_Read_DMA(&hi2c1, 0x68<<1, 59, 1, dat, 14);
-			HAL_I2C_Mem_Read_DMA(&hi2c2, 0b0011100<<1, 0x28, 1, dat_, 8);
-			if (abs((int8_t)dat[0])>THRES || abs((int8_t)dat[2])>THRES || abs((int8_t)dat[4])>THRES ||
-					abs((int8_t)dat[8])>THRES || abs((int8_t)dat[10])>THRES || abs((int8_t)dat[12])>THRES) {
-				//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
-				HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
-				HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
-			}
-			else {
-				//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
-				HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
-			}
+      //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+      count++;
+      cp();
+      HAL_I2C_Mem_Read_DMA(&hi2c1, 0x68<<1, 59, 1, dat, 14);
+      HAL_I2C_Mem_Read_DMA(&hi2c2, 0b0011100<<1, 0x28, 1, dat_, 8);
+      if (abs((int8_t)dat[0])>THRES || abs((int8_t)dat[2])>THRES || abs((int8_t)dat[4])>THRES ||
+          abs((int8_t)dat[8])>THRES || abs((int8_t)dat[10])>THRES || abs((int8_t)dat[12])>THRES) {
+        //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_RESET);
+      }
+      else {
+        //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_13, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_RESET);
+        HAL_GPIO_WritePin(GPIOD, GPIO_PIN_11, GPIO_PIN_SET);
+      }
 
-			uint8_t mes_length = N_IMU_CHARS + buf_flag_cameras_ts_ready * N_CAMERAS_CHARS + buf_flag_mocap_ts_ready * N_MOCAP_CHARS;
-			make_message();
-			HAL_UART_Transmit_DMA(&huart4, str, mes_length);//, 1000);	//HAL_UART_Transmit_DMA(&huart4, str, N_CHARS);
+      uint8_t mes_length = N_IMU_CHARS + buf_flag_cameras_ts_ready * N_CAMERAS_CHARS + buf_flag_mocap_ts_ready * N_MOCAP_CHARS;
+      make_message();
+      HAL_UART_Transmit_DMA(&huart4, str, mes_length);//, 1000);  //HAL_UART_Transmit_DMA(&huart4, str, N_CHARS);
 
-			//if(__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_9) != RESET) {__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_9);}
-			//HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+      //if(__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_9) != RESET) {__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_9);}
+      //HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
-		  if (flag_data_received_from_pc == 1) {
-				received_tuple received = parse_data();
-				if (received.cmd == START_TRIGGER_CMD) {
-				  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-				  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
-				}
-				/*else if (received.cmd == ALIGN_FRAMES_CMD) {
-					alignment_subs_received = received.data;
-					align_timer();
-					HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
-				}*/
-				else if (received.cmd == STOP_TRIGGER_CMD) {
-				  HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
-				  HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_2);
-				}
-				flag_data_received_from_pc = 0;
-				receive_from_pc();
-			}
-			//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
-			if(count & 1024) { HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);}
-			/*if (flag_pause_triggering == 1) {
+      if (flag_data_received_from_pc == 1) {
+        received_tuple received = parse_data();
+        if (received.cmd == START_TRIGGER_CMD) {
+          HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+          HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
+        }
+        /*else if (received.cmd == ALIGN_FRAMES_CMD) {
+          alignment_subs_received = received.data;
+          align_timer();
+          HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
+        }*/
+        else if (received.cmd == STOP_TRIGGER_CMD) {
+          HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
+          HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_2);
+        }
+        flag_data_received_from_pc = 0;
+        receive_from_pc();
+      }
+      //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
+      if(count & 1024) { HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);}
+      /*if (flag_pause_triggering == 1) {
         if (count == 5000) {
           HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
           HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_2);
@@ -558,10 +558,10 @@ fields that require very fine timing resolution.
           HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
           flag_pause_triggering = 0;
         }
-			}*/
+      }*/
 
 
-  	}
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
