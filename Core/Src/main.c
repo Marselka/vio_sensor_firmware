@@ -172,7 +172,7 @@ int _write(int file,char *ptr, int len) {
 //}
 
 void setup_mpu(void) {
-	uint8_t dat[] = {5, 16, 1, 1, 8, 8};
+	uint8_t dat[] = {   5, 16,  1,  1,  8,  8};
 	uint8_t adds[] = {107, 55, 26, 56, 27, 28};
 	uint8_t n_of_bytes = sizeof(dat) / sizeof(dat[0]);
 	for (uint8_t idx=0; idx<n_of_bytes; idx++) {
@@ -409,8 +409,8 @@ int main(void)
 	//HAL_TIM_OC_Start_IT(&htim1, TIM_CHANNEL_1);
   //HAL_TIM_IC_Start(&htim3, TIM_CHANNEL_1);
   //HAL_TIM_OC_Start(&htim3, TIM_CHANNEL_2);
-  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
-  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
+  //HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+  //HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
   HAL_TIM_Base_Start_IT(&htim2);
   HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1);
   HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_2);
@@ -427,6 +427,35 @@ int main(void)
   //76.8 * 1000000 / ((7680 - 1 + 1) * (1000 - 1 + 1)) / 2 = 5 Hz TIM2 CAMERAS
 	//76.8 * 1000000 / ((7680 - 1 + 1) * (5000 - 1 + 1)) / 2 = 1 Hz TIM1 LIDAR
 	//76.8 * 1000000 / ((3 - 1 + 1) * (25600000 - 1 + 1)) = 1 Hz TIM5
+
+/*
+• General-purpose timers (32 bit: TIM2, TIM5; 16 bit: TIM3, TIM4) can be used by any application for: output comparison
+(timing and delay generation), one-pulse mode, input capture (for external signal
+frequency measurement), sensor interface (encoder, hall sensor);
+
+• Advanced timers (TIM1, TIM8): these timers have the most features. In addition to general purpose
+functions, they include several features related to motor control and digital power
+conversion applications: three complementary signals with deadtime insertion and
+emergency shut-down input;
+
+• One (TIM10, TIM11, TIM13, TIM14) or two channel (TIM9, TIM12) timers: used as general-purpose timers with a limited number of
+channels.
+
+• One or two channel timers with complementary output (-): same as the previous timer
+type with an additional deadtime generator on one channel. In some situations, this
+feature allows a general purpose timer to be used where an additional advanced timer
+would be necessary.
+
+• Basic timers (TIM6, TIM7) are used either as timebase timers or for triggering the DAC peripheral
+These timers don’t have any input/output capabilities;
+
+• Low-power timers (-) are simple general purpose timers and are able to operate in low-
+power modes.They are used to generate a wake-up event for example;
+
+• High-resolution timers (-) are specialized timer peripherals designed to drive power
+conversion in lighting and power source applications. They can also be used in other
+fields that require very fine timing resolution.
+*/
 
 /*----------|  |------------
 |                          |
@@ -499,28 +528,28 @@ int main(void)
 			//if(__HAL_GPIO_EXTI_GET_IT(GPIO_PIN_9) != RESET) {__HAL_GPIO_EXTI_CLEAR_IT(GPIO_PIN_9);}
 			//HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
-		/*if (flag_data_received_from_pc == 1) {
+		  if (flag_data_received_from_pc == 1) {
 				received_tuple received = parse_data();
 				if (received.cmd == START_TRIGGER_CMD) {
-					HAL_TIM_OC_Start_IT(&htim2, TIM_CHANNEL_1);
+				  HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL_1);
+				  HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
 				}
-				else if (received.cmd == ALIGN_FRAMES_CMD) {
+				/*else if (received.cmd == ALIGN_FRAMES_CMD) {
 					alignment_subs_received = received.data;
 					align_timer();
 					HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_15);
-				}
+				}*/
 				else if (received.cmd == STOP_TRIGGER_CMD) {
-					HAL_TIM_OC_Stop_IT(&htim2, TIM_CHANNEL_1);
+				  HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
+				  HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_2);
 				}
-
 				flag_data_received_from_pc = 0;
 				receive_from_pc();
 			}
-		  }*/
 			//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_14, GPIO_PIN_SET);
 			if(count & 1024) { HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_12);}
-			if (flag_pause_triggering == 1) {
-        if (count == 10000) {
+			/*if (flag_pause_triggering == 1) {
+        if (count == 5000) {
           HAL_TIM_PWM_Stop(&htim3, TIM_CHANNEL_1);
           HAL_TIM_PWM_Stop(&htim4, TIM_CHANNEL_2);
         }
@@ -529,7 +558,7 @@ int main(void)
           HAL_TIM_PWM_Start(&htim4, TIM_CHANNEL_2);
           flag_pause_triggering = 0;
         }
-			}
+			}*/
 
 
   	}
